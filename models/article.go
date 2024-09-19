@@ -2,7 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
-var Article struct {
+type Article struct {
 	gorm.Model
 	Title     string
 	Content   string

@@ -1,6 +1,6 @@
 package models
 
-var Response struct {
+type Response struct {
 	code int
 	msg  string
 	data interface{}
