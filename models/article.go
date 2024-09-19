@@ -1,0 +1,15 @@
+package models
+
+import "gorm.io/gorm"
+
+var Article struct {
+	gorm.Model
+	Title     string
+	Content   string
+	Summary   string
+	Thumbnail string
+	IsTop     bool
+	Status    bool
+	ViewCount int64
+	IsComment bool
+}
