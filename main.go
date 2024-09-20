@@ -1,8 +1,18 @@
 package main
 
-import "blog/configs"
+import (
+	"blog/handlers"
+	"blog/routers"
+	"log"
+
+	"github.com/joho/godotenv"
+)
 
 func main() {
-	configs.InitDatabase()
-
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
+	handlers.InitDatabase()
+	routers.InitRouter()
 }

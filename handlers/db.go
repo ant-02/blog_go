@@ -1,21 +1,17 @@
-package configs
+package handlers
 
 import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+var db *gorm.DB
 
 func InitDatabase() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file", err)
-	}
+	var err error
 
 	dsn := os.Getenv("DB_USER") + ":" +
 		os.Getenv("DB_PASSWORD") +
@@ -23,7 +19,7 @@ func InitDatabase() {
 		")/" + os.Getenv("DB_NAME") +
 		"?charset=utf8mb4&parseTime=True&loc=Local"
 
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database", err)
 	}
