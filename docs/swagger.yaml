@@ -1,0 +1,27 @@
+info:
+  contact: {}
+paths:
+  /article:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: 通过id获取文章
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: 创建新的文章
+  /articles:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: 获取全部文章
+swagger: "2.0"

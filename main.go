@@ -1,8 +1,8 @@
 package main
 
 import (
-	"blog/handlers"
-	"blog/routers"
+	"blog/internal/handlers"
+	"blog/internal/routers"
 	"log"
 
 	"github.com/joho/godotenv"

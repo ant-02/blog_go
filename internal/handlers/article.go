@@ -1,13 +1,17 @@
 package handlers
 
 import (
-	"blog/models"
+	"blog/internal/models"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary 获取全部文章
+// @Produce json
+// @Success 200
+// @Router /articles [get]
 func GetArticles(c *gin.Context) {
 	var articles []models.Article
 	result := db.Find(&articles)
@@ -27,6 +31,10 @@ func GetArticles(c *gin.Context) {
 	})
 }
 
+// @Summary 创建新的文章
+// @Produce json
+// @Success 200
+// @Router /article [post]
 func CreateArticle(c *gin.Context) {
 	var article models.Article
 	err := c.BindJSON(&article)
@@ -58,6 +66,10 @@ func CreateArticle(c *gin.Context) {
 	})
 }
 
+// @Summary 通过id获取文章
+// @Produce json
+// @Success 200
+// @Router /article [get]
 func GetArticleById(c *gin.Context) {
 	id := c.Param("id")
 	var article models.Article
