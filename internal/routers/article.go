@@ -7,13 +7,13 @@ import (
 )
 
 func article(r *gin.Engine) {
-	getArticles(r)
+	getArticlePreViews(r)
 	createArticle(r)
 	getArticleById(r)
 }
 
-func getArticles(r *gin.Engine) {
-	r.GET("/articles", handlers.GetArticles)
+func getArticlePreViews(r *gin.Engine) {
+	r.GET("/articles", handlers.GetArticlePreview)
 }
 
 func createArticle(r *gin.Engine) {

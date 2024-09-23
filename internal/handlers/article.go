@@ -8,29 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary 获取全部文章
-// @Produce json
-// @Success 200
-// @Router /articles [get]
-func GetArticles(c *gin.Context) {
-	var articles []models.Article
-	result := db.Find(&articles)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code: 500,
-			Msg:  "获取全部文章信息失败",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, models.Response{
-		Code: 200,
-		Msg:  "获取全部文章信息成功",
-		Data: articles,
-	})
-}
-
 // @Summary 创建新的文章
 // @Produce json
 // @Success 200
@@ -87,5 +64,29 @@ func GetArticleById(c *gin.Context) {
 		Code: 200,
 		Msg:  "通过id查询文章信息成功",
 		Data: article,
+	})
+}
+
+// @Summary 获取文章预览信息
+// @Produce json
+// @Success 200
+// @Router /articles [get]
+func GetArticlePreview(c *gin.Context) {
+	var articles []models.Article
+	
+	result := db.Order("is_top desc").Order("created_at desc").Find(&articles)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code: 500,
+			Msg: "获取文章预览失败",
+		})
+		return
+	}
+	
+
+	c.JSON(http.StatusOK, models.Response{
+		Code: 200,
+		Msg: "获取文章预览成功",
+		Data: models.MakeArticlePreviewRes(articles),
 	})
 }
