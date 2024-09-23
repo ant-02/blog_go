@@ -28,10 +28,7 @@ type ArticlePreview struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-type ArticlePreviewRes struct {
-	ArticlePreviews []ArticlePreview `json:"articles"`
-	Size            int              `json:"size"`
-}
+
 
 func (a *Article) GenerateArticlePreview() ArticlePreview {
 	return ArticlePreview{
@@ -42,14 +39,4 @@ func (a *Article) GenerateArticlePreview() ArticlePreview {
 		ViewCount: a.ViewCount,
 		CreatedAt: a.CreatedAt,
 	}
-}
-
-func MakeArticlePreviewRes(articles []Article) ArticlePreviewRes {
-	var articlePreviewRes ArticlePreviewRes
-	articlePreviewRes.Size = len(articles)
-	articlePreviewRes.ArticlePreviews = make([]ArticlePreview, len(articles))
-	for i, article := range articles {
-		articlePreviewRes.ArticlePreviews[i] = article.GenerateArticlePreview()
-	}
-	return articlePreviewRes
 }

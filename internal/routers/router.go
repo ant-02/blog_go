@@ -29,6 +29,10 @@ func InitRouter() {
 
 	// 文章路由
 	article(r)
+	// 标签路由
+	tag(r)
+	// 文章标签路由
+	articleTag(r)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
