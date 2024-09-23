@@ -12,7 +12,7 @@ type ArticlePreviewTagRes struct {
 }
 
 type ArticlePreviewTag struct {
-	ID              uint   `json:"id"`
-	Name            string `json:"name"`
-	ArticlePreviews []ArticlePreview
+	ID              uint             `json:"id"`
+	Name            string           `json:"name"`
+	ArticlePreviews []ArticlePreview `json:"articlePreviews"`
 }
