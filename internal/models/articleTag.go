@@ -6,7 +6,7 @@ type ArticleTag struct {
 	ArticleId uint `json:"articleId"`
 }
 
-type ArticlePreviewTagRes struct {
+type ArticlePreviewTagsRes struct {
 	ArticlePreviewTags []ArticlePreviewTag `json:"articlePreviewTags"`
 	Size               int                 `json:"size"`
 }

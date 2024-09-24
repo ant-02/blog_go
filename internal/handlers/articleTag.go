@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"blog/internal/models"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +22,7 @@ func GetArticlePreviewTags(c *gin.Context) {
 		return
 	}
 
-	var articlePreviewTagsRes models.ArticlePreviewTagRes
+	var articlePreviewTagsRes models.ArticlePreviewTagsRes
 	articlePreviewTagsRes.ArticlePreviewTags = make([]models.ArticlePreviewTag, len(tags))
 	articlePreviewTagsRes.Size = len(tags)
 	for i, tag := range tags {
@@ -53,5 +54,50 @@ func GetArticlePreviewTags(c *gin.Context) {
 		Code: 200,
 		Msg: "获取文章预览成功",
 		Data: articlePreviewTagsRes,
+	})
+}
+
+func GetArticlePreviewTag(c *gin.Context) {
+	id := c.Param("id")
+
+	var tag models.Tag
+	if result := db.First(&tag, id); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code: 500,
+			Msg: "获取标签文章失败",
+		})
+		return 
+	}
+
+	var articleTags []models.ArticleTag
+	if result := db.Where("tag_id", tag.ID).Find(&articleTags); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code: 500,
+			Msg: "获取标签文章失败",
+		})
+		return
+	}
+
+	var articlePreviewTag models.ArticlePreviewTag
+	articlePreviewTag.ID = tag.ID
+	articlePreviewTag.Name = tag.Name
+	articlePreviewTag.ArticlePreviews = make([]models.ArticlePreview, len(articleTags))
+	for i, articleTag := range articleTags {
+		fmt.Println(articleTag)
+		var article models.Article
+		if result := db.First(&article, articleTag.ArticleId); result.Error != nil {
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code: 500,
+				Msg: "获取标签文章失败",
+			})
+			return
+		}
+		articlePreviewTag.ArticlePreviews[i] = article.GenerateArticlePreview()
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code: 200,
+		Msg: "获取标签文章成功",
+		Data: articlePreviewTag,
 	})
 }
