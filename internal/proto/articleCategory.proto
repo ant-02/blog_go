@@ -1,0 +1,36 @@
+syntax = "proto3";
+option go_package = "/internal/pb";
+
+package articleCategory;
+
+message ArticleCategoryIdRequest{
+    uint64 id = 1;
+    int64 count = 2;
+}
+
+message ArticleCategoryIdResponse{
+    uint64 id = 1;
+}
+
+message ArticleCategoryRequest {
+    ArticleCategory articleCategory = 1;
+}
+
+message ArticleCategory {
+    uint64 categoryId = 1;
+    uint64 articleId = 2;
+}
+
+message ArticleCategoryListResponse {
+    repeated ArticleCategory articleCategoryList = 1;
+}
+
+message ArticleCategoryResponse {
+    bool ok = 1;
+}
+
+service ArticleCategoryService {
+    rpc GetByCategoryId(ArticleCategoryIdRequest) returns (ArticleCategoryListResponse);
+    rpc GetCategoryIdByArticleId(ArticleCategoryIdRequest) returns (ArticleCategoryIdResponse);
+    rpc SaveArticleCategory(ArticleCategoryRequest) returns (ArticleCategoryResponse);
+}

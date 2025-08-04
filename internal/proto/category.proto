@@ -1,0 +1,23 @@
+syntax = "proto3";
+option go_package = "/internal/pb";
+
+package category;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message CategoryResponse {
+    uint64 id = 1;
+    string name = 2;
+    google.protobuf.Timestamp createdAt = 3;
+    google.protobuf.Timestamp updateAt = 4;
+    google.protobuf.Timestamp deleteAt = 5;
+}
+
+message CategoryListResponse {
+    repeated CategoryResponse categories = 1;
+}
+
+service CategoryService {
+    rpc GetAll(google.protobuf.Empty) returns (CategoryListResponse);
+}

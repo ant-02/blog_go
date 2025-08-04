@@ -1,0 +1,29 @@
+syntax = "proto3";
+option go_package = "/internal/pb";
+
+package userFollow;
+
+message UserFollowIdRequest {
+    uint64 id = 1;
+}
+
+message IsFollowedRequest {
+    uint64 followerId = 1;
+    uint64 followingId = 2;
+    bool isFollow = 3;
+}
+
+message UserFollowIdResponse {
+    repeated uint64 id = 1;
+}
+
+message IsFollowResponse {
+    bool isFollow = 1;
+}
+
+service UserFollowService {
+    rpc GetUserFollowerIds(UserFollowIdRequest) returns (UserFollowIdResponse);
+    rpc GetUserFollowingIds(UserFollowIdRequest) returns (UserFollowIdResponse);
+    rpc GetIsFollow(IsFollowedRequest) returns (IsFollowResponse);
+    rpc SetIsFollow(IsFollowedRequest) returns (IsFollowResponse);
+}

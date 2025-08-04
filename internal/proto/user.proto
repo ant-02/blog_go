@@ -1,0 +1,48 @@
+syntax = "proto3";
+option go_package = "/internal/pb";
+
+package user;
+import "google/protobuf/timestamp.proto";
+
+message UserIdRequest {
+    uint64 id = 1;
+}
+
+message UserKeywordsRequest {
+    string keywords = 1;
+}
+
+message UserLoginRequest {
+    string phone = 1;
+    string password = 2;
+}
+
+message UserResponse {
+    uint64 id = 1;
+    string username = 2;
+    string phone =3;
+    string avatar = 4;
+    string password = 5;
+    string email = 6;
+    string bio = 7;
+    google.protobuf.Timestamp createdAt = 8;
+    google.protobuf.Timestamp updateAt = 9;
+    google.protobuf.Timestamp deleteAt = 10;
+}
+
+message UserDTOResponse {
+    uint64 id = 1;
+    string username = 2;
+    string avatar = 3;
+}
+
+message UserDTOsResponse {
+    repeated UserDTOResponse userDTOs = 1;
+}
+
+service UserService {
+    rpc GetUserDTOById(UserIdRequest) returns (UserDTOResponse);
+    rpc Login(UserLoginRequest) returns (UserResponse);
+    rpc GetUserById(UserIdRequest) returns (UserResponse);
+    rpc GetUserDTOsByKeywords(UserKeywordsRequest) returns (UserDTOsResponse);
+}

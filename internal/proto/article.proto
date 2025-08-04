@@ -1,0 +1,63 @@
+syntax = "proto3";
+option go_package = "/internal/pb";
+
+package article;
+
+import "google/protobuf/timestamp.proto";
+
+message ArticleIdRequest {
+    uint64 id = 1;
+    uint64 page = 2;
+    uint64 pageSize = 3;
+    string status = 4;
+}
+
+message ArticleKeywordsRequest {
+    string keywords = 1;
+}
+
+message Article {
+    uint64 id = 1;
+    string title = 2;
+    string content = 3;
+    string summary = 4;
+    string coverImage = 5;
+    uint64 AuthorId = 6;
+    string status = 7;
+    google.protobuf.Timestamp createdAt = 8;
+    google.protobuf.Timestamp updateAt = 9;
+    google.protobuf.Timestamp deleteAt = 10;
+}
+
+message ArticleRequest {
+    Article article = 1;
+}
+
+message SaveArticleResponse {
+    bool res = 1;
+}
+
+message ArticleResponse {
+    Article Article = 1;
+}
+
+message ArticleDTOResponse {
+    uint64 id = 1;
+    string title = 2;
+    string coverImage = 3;
+    google.protobuf.Timestamp updatedAt = 4;
+    string summary = 5;
+}
+
+message ArticleDTOsResponse {
+    repeated ArticleDTOResponse articleDTOs = 1;
+    uint64 count = 2;
+}
+
+service ArticleService {
+    rpc GetArticleById(ArticleIdRequest) returns (ArticleResponse);
+    rpc GetArticleDTOById(ArticleIdRequest) returns (ArticleDTOResponse); 
+    rpc GetArticleDTOsByKeyWords(ArticleKeywordsRequest) returns (ArticleDTOsResponse);
+    rpc GetArticleDTOsByUserId(ArticleIdRequest) returns (ArticleDTOsResponse);
+    rpc SaveArticle(ArticleRequest) returns (SaveArticleResponse);
+}
