@@ -4,9 +4,10 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"zll.blog.com/internal/model"
 )
 
-func InitDatabase(dsn, dbName string) (*gorm.DB, error) {
+func InitDatabase(dsn, nameDsn, dbName string) (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
@@ -29,7 +30,11 @@ func InitDatabase(dsn, dbName string) (*gorm.DB, error) {
 	sqlDB.Close()
 
 	// 4. 连接到目标数据库
-	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	return gorm.Open(mysql.Open(nameDsn), &gorm.Config{})
+}
+
+func Migrate(db *gorm.DB) error {
+	return db.AutoMigrate(&model.Article{}, &model.ArticleCategory{}, &model.ArticleTag{}, &model.Category{}, &model.Tag{}, &model.User{}, &model.UserFollow{})
 }
 
 func Exists(db *gorm.DB, model interface{}, query interface{}, args ...interface{}) (bool, error) {

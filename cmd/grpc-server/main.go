@@ -20,9 +20,15 @@ func main() {
 	logger.InitLogger(config.Log.Level, logPath+config.Log.Path)
 
 	dsn := config.Database.Username + ":" + config.Database.Password + "@tcp(" + config.Database.Host + ":" + config.Database.Port + ")/?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := db.InitDatabase(dsn, config.Database.Dbname)
+	nameDsn := config.Database.Username + ":" + config.Database.Password + "@tcp(" + config.Database.Host + ":" + config.Database.Port + ")/" + config.Database.Dbname + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dB, err := db.InitDatabase(dsn, nameDsn, config.Database.Dbname)
 	if err != nil {
 		log.Fatalf("failed to init database: %v", err)
+	}
+
+	err = db.Migrate(dB)
+	if err != nil {
+		log.Fatalf("failed to migrate models: %v", err)
 	}
 
 	lis, err := net.Listen("tcp", ":50051")
@@ -31,7 +37,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	server.RegisterAllServer(grpcServer, db)
+	server.RegisterAllServer(grpcServer, dB)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
