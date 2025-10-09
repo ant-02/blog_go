@@ -19,8 +19,8 @@ func main() {
 	config := config.GetConfig()
 	logger.InitLogger(config.Log.Level, logPath+config.Log.Path)
 
-	dsn := config.Database.Username + ":" + config.Database.Password + "@tcp(" + config.Database.Host + ":" + config.Database.Port + ")/" + config.Database.Dbname + "?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := db.InitDatabase(dsn)
+	dsn := config.Database.Username + ":" + config.Database.Password + "@tcp(" + config.Database.Host + ":" + config.Database.Port + ")/?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := db.InitDatabase(dsn, config.Database.Dbname)
 	if err != nil {
 		log.Fatalf("failed to init database: %v", err)
 	}
