@@ -52,3 +52,11 @@ func (us *userServer) GetUserDTOsByKeywords(ctx context.Context, in *pb.UserKeyw
 	}
 	return uDs, nil
 }
+
+func (us *userServer) Register(ctx context.Context, in *pb.UserLoginRequest) (*pb.UserResponse, error) {
+	user, err := us.userService.Register(in.Phone, in.Password)
+	if err != nil {
+		return nil, err
+	}
+	return converter.ModelToProtoForUser(user), err
+}

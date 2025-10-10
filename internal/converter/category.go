@@ -2,6 +2,7 @@ package converter
 
 import (
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"gorm.io/gorm"
 	"zll.blog.com/internal/model"
 	"zll.blog.com/internal/pb"
 )
@@ -14,7 +15,7 @@ func ProtoToModelForCategoryList(p *pb.CategoryListResponse) []*model.Category {
 				Id:        ap.Id,
 				CreatedAt: ap.CreatedAt.AsTime(),
 				UpdatedAt: ap.UpdateAt.AsTime(),
-				DeletedAt: ap.DeleteAt.AsTime(),
+				DeletedAt: gorm.DeletedAt{Time: ap.DeleteAt.AsTime()},
 			},
 			Name: ap.Name,
 		})
@@ -31,7 +32,7 @@ func ModelToProtoForCategoryList(m []*model.Category) *pb.CategoryListResponse {
 			Name:      am.Name,
 			CreatedAt: timestamppb.New(am.CreatedAt),
 			UpdateAt:  timestamppb.New(am.UpdatedAt),
-			DeleteAt:  timestamppb.New(am.DeletedAt),
+			DeleteAt:  timestamppb.New(am.DeletedAt.Time),
 		})
 	}
 	return &categories

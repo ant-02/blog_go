@@ -48,7 +48,7 @@ func (uc *userController) Login(c *gin.Context) {
 	}
 
 	user := converter.ProtoToModelForUser(res)
-	if !user.DeletedAt.IsZero() {
+	if !user.DeletedAt.Time.IsZero() {
 		c.JSON(http.StatusNonAuthoritativeInfo, gin.H{"data": "该账户已注销"})
 		return
 	}
@@ -100,4 +100,49 @@ func (uc *userController) GetUserDTOsByKeywords(c *gin.Context) {
 		uDs = append(uDs, converter.ProtoToModelForUserDTO(u))
 	}
 	c.JSON(http.StatusOK, gin.H{"data": uDs})
+}
+
+func (uc *userController) Register(c *gin.Context) {
+	var userLoginRequest *pb.UserLoginRequest
+	if err := c.ShouldBindJSON(&userLoginRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"data": "Invalid JSON"})
+		return
+	}
+
+	res, err := uc.userClient.Register(context.Background(), userLoginRequest)
+	if err != nil || res.Id == 0 {
+		c.JSON(http.StatusNonAuthoritativeInfo, gin.H{"data": "注册失败"})
+		return
+	}
+
+	res, err = uc.userClient.Login(context.Background(), userLoginRequest)
+	if err != nil || res.Id == 0 {
+		c.JSON(http.StatusNonAuthoritativeInfo, gin.H{"data": "密码错误"})
+		return
+	}
+
+	user := converter.ProtoToModelForUser(res)
+	if !user.DeletedAt.Time.IsZero() {
+		c.JSON(http.StatusNonAuthoritativeInfo, gin.H{"data": "该账户已注销"})
+		return
+	}
+
+	config := config.GetConfig()
+	token, err := util.GenerateToken(uint(res.Id), config.Jwt.SecretKey, config.Jwt.Signed, config.Jwt.ExpireTime)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"data": "未知错误"})
+		return
+	}
+
+	redis := util.GetRedis(config.Redis.Addr, config.Redis.Password, config.Redis.Db)
+	if err := redis.Set(strconv.Itoa(int(user.Id)), token, config.Jwt.ExpireTime*time.Hour); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"data": "未知错误"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": gin.H{
+			"user":  user,
+			"token": token,
+		},
+	})
 }

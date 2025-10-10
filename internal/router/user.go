@@ -18,6 +18,7 @@ func RegisterUserRouter(r *gin.Engine, conn *grpc.ClientConn) {
 		userGroup.GET("/dto/:id", userController.GetUserDTOById)
 		userGroup.POST("/login", userController.Login)
 		userGroup.GET("/dtos/:keywords", userController.GetUserDTOsByKeywords)
+		userGroup.POST("/register", userController.Register)
 	}
 	userAuthGroup := userGroup.Group("/auth")
 	userAuthGroup.Use(middleware.JWTAuthMiddleWare(config.GetConfig().Jwt.SecretKey))

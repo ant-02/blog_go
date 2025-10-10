@@ -3,6 +3,8 @@ package repository
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
+	"time"
 
 	"gorm.io/gorm"
 	"zll.blog.com/internal/model"
@@ -13,6 +15,7 @@ type UserRepository interface {
 	Login(phone string, password string) (*model.User, error)
 	GetUserById(id uint) (*model.User, error)
 	GetUserDTOsByKeywords(keywords string) ([]*model.UserDTO, error)
+	Register(phone string, password string) (*model.User, error)
 }
 
 type userRepository struct {
@@ -54,4 +57,28 @@ func (ur *userRepository) GetUserDTOsByKeywords(keywords string) ([]*model.UserD
 		Where("username LIKE ?", keywords).
 		Find(&userDTOs).Error
 	return userDTOs, err
+}
+
+func (ur *userRepository) Register(phone string, password string) (*model.User, error) {
+	hash := md5.Sum([]byte(password))
+	ecd := hex.EncodeToString(hash[:])
+	var user *model.User
+	err := ur.db.Where(&model.User{Phone: phone}).
+		Find(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	if user.Id != 0 {
+		return nil, errors.New("phone have been created")
+	}
+	user.Phone = phone
+	user.Password = ecd
+	user.CreatedAt = time.Now()
+	err = ur.db.Model(&model.User{}).
+		Create(user).Error
+	if err != nil {
+		return nil, err
+	}
+	user.Password = password
+	return user, nil
 }

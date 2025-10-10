@@ -2,6 +2,7 @@ package converter
 
 import (
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"gorm.io/gorm"
 	"zll.blog.com/internal/model"
 	"zll.blog.com/internal/pb"
 )
@@ -12,7 +13,7 @@ func ProtoToModelForArticle(p *pb.Article) *model.Article {
 			Id:        p.Id,
 			CreatedAt: p.CreatedAt.AsTime(),
 			UpdatedAt: p.UpdateAt.AsTime(),
-			DeletedAt: p.DeleteAt.AsTime(),
+			DeletedAt: gorm.DeletedAt{Time: p.DeleteAt.AsTime()},
 		},
 		Title:      p.Title,
 		Summary:    p.Summary,
@@ -34,7 +35,7 @@ func ModelToProtoForArticle(m *model.Article) *pb.Article {
 		Status:     m.Status,
 		CreatedAt:  timestamppb.New(m.CreatedAt),
 		UpdateAt:   timestamppb.New(m.UpdatedAt),
-		DeleteAt:   timestamppb.New(m.DeletedAt),
+		DeleteAt:   timestamppb.New(m.DeletedAt.Time),
 	}
 }
 

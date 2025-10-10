@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: user.proto
+// source: internal/proto/user.proto
 
 package pb
 
@@ -23,6 +23,7 @@ const (
 	UserService_Login_FullMethodName                 = "/user.UserService/Login"
 	UserService_GetUserById_FullMethodName           = "/user.UserService/GetUserById"
 	UserService_GetUserDTOsByKeywords_FullMethodName = "/user.UserService/GetUserDTOsByKeywords"
+	UserService_Register_FullMethodName              = "/user.UserService/Register"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -33,6 +34,7 @@ type UserServiceClient interface {
 	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	GetUserById(ctx context.Context, in *UserIdRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	GetUserDTOsByKeywords(ctx context.Context, in *UserKeywordsRequest, opts ...grpc.CallOption) (*UserDTOsResponse, error)
+	Register(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserResponse, error)
 }
 
 type userServiceClient struct {
@@ -83,6 +85,16 @@ func (c *userServiceClient) GetUserDTOsByKeywords(ctx context.Context, in *UserK
 	return out, nil
 }
 
+func (c *userServiceClient) Register(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, UserService_Register_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type UserServiceServer interface {
 	Login(context.Context, *UserLoginRequest) (*UserResponse, error)
 	GetUserById(context.Context, *UserIdRequest) (*UserResponse, error)
 	GetUserDTOsByKeywords(context.Context, *UserKeywordsRequest) (*UserDTOsResponse, error)
+	Register(context.Context, *UserLoginRequest) (*UserResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedUserServiceServer) GetUserById(context.Context, *UserIdReques
 }
 func (UnimplementedUserServiceServer) GetUserDTOsByKeywords(context.Context, *UserKeywordsRequest) (*UserDTOsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserDTOsByKeywords not implemented")
+}
+func (UnimplementedUserServiceServer) Register(context.Context, *UserLoginRequest) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -206,6 +222,24 @@ func _UserService_GetUserDTOsByKeywords_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_Register_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Register(ctx, req.(*UserLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -229,7 +263,11 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetUserDTOsByKeywords",
 			Handler:    _UserService_GetUserDTOsByKeywords_Handler,
 		},
+		{
+			MethodName: "Register",
+			Handler:    _UserService_Register_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "user.proto",
+	Metadata: "internal/proto/user.proto",
 }

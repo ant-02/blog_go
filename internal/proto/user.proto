@@ -45,4 +45,5 @@ service UserService {
     rpc Login(UserLoginRequest) returns (UserResponse);
     rpc GetUserById(UserIdRequest) returns (UserResponse);
     rpc GetUserDTOsByKeywords(UserKeywordsRequest) returns (UserDTOsResponse);
+    rpc Register(UserLoginRequest) returns (UserResponse);
 }
